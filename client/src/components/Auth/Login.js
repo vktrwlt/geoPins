@@ -1,37 +1,57 @@
-import React from "react";
+import React, { useContext } from "react";
 import { GraphQLClient } from "graphql-request";
 import { GoogleLogin } from "react-google-login";
 import { withStyles } from "@material-ui/core/styles";
-// import Typography from "@material-ui/core/Typography";
+import Typography from "@material-ui/core/Typography";
 
-const ME_QUERY = `{
-  me{
-    _id
-    email
-    name
-    picture
-  }
-}`;
+import Context from "../../context";
+import { USER_QUERY } from "../../graphql/queries";
 
 const Login = ({ classes }) => {
+  const { dispatch } = useContext(Context);
+
   const onSuccess = async (googleUser) => {
-    // user token
-    console.log(googleUser);
-    const idToken = googleUser.getAuthResponse().id_token;
-    const client = new GraphQLClient("http://localhost:4000/graphql", {
-      headers: {
-        authorization: idToken,
-      },
-    });
-    const data = await client.request(ME_QUERY);
-    console.log(data);
+    try {
+      // user token
+      const idToken = googleUser.getAuthResponse().id_token;
+      const client = new GraphQLClient("http://localhost:4000/graphql", {
+        headers: {
+          authorization: idToken,
+        },
+      });
+      const { user } = await client.request(USER_QUERY);
+      dispatch({
+        type: "LOGIN_USER",
+        payload: user,
+      });
+    } catch (error) {
+      onFailure(error);
+    }
   };
+
+  const onFailure = (error) => {
+    console.error("Error logging in", error);
+  };
+
   return (
-    <GoogleLogin
-      clientId="332037095951-r6umeh8ptp8aviiec1o2jkaodcaemqv7.apps.googleusercontent.com"
-      onSuccess={onSuccess}
-      isSignedIn={true}
-    />
+    <div className={classes.root}>
+      <Typography
+        component="h1"
+        variant="h3"
+        gutterBottom
+        noWrap
+        style={{ color: "rgb(66,133,244)" }}
+      >
+        Welcome
+      </Typography>
+      <GoogleLogin
+        clientId="332037095951-r6umeh8ptp8aviiec1o2jkaodcaemqv7.apps.googleusercontent.com"
+        onSuccess={onSuccess}
+        onFailure={onFailure}
+        isSignedIn={true}
+        theme="dark"
+      />
+    </div>
   );
 };
 
