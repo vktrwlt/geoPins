@@ -16,6 +16,21 @@ export default function reducer(state, { type, payload }) {
         currentUser: null,
         isAuth: false,
       };
+    case "CREATE_DRAFT":
+      return {
+        ...state,
+        draft: { latitude: 0, longitude: 0 },
+      };
+    case "DELETE_DRAFT":
+      return {
+        ...state,
+        draft: null,
+      };
+    case "UPDATE_DRAFT_LOCATION":
+      return {
+        ...state,
+        draft: payload,
+      };
     default:
       return state;
   }

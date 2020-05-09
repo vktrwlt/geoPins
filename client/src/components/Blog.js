@@ -1,9 +1,30 @@
-import React from "react";
+import React, { useContext } from "react";
 import { withStyles } from "@material-ui/core/styles";
-// import { Paper } from "@material-ui/core";
+import { Paper } from "@material-ui/core";
+
+import Context from "../context";
+import CreatePin from "../components/Pin/CreatePin";
+import NoContent from "../components/Pin/NoContent";
+import PinContent from "../components/Pin/PinContent";
 
 const Blog = ({ classes }) => {
-  return <div>Blog</div>;
+  const { state } = useContext(Context);
+  const { draft } = state;
+
+  let BlogContent;
+  if (!draft) {
+    // no content
+    BlogContent = NoContent;
+  } else if (draft) {
+    //create pin
+    BlogContent = CreatePin;
+  }
+
+  return (
+    <Paper className={classes.root}>
+      <BlogContent />
+    </Paper>
+  );
 };
 
 const styles = {
@@ -13,14 +34,14 @@ const styles = {
     maxHeight: "calc(100vh - 64px)",
     overflowY: "scroll",
     display: "flex",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   rootMobile: {
     maxWidth: "100%",
     maxHeight: 300,
     overflowX: "hidden",
-    overflowY: "scroll"
-  }
+    overflowY: "scroll",
+  },
 };
 
 export default withStyles(styles)(Blog);
