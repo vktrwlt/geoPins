@@ -24,13 +24,14 @@ const CreatePin = ({ classes }) => {
     try {
       event.preventDefault();
       setSubmitting(true);
-      const token = window.gapi.auth2
+
+      const idToken = window.gapi.auth2
         .getAuthInstance()
         .currentUser.get()
         .getAuthResponse().id_token;
-      console.log(token);
+
       const client = new GraphQLClient("http://localhost:4000/graphql", {
-        headers: { authorization: token },
+        headers: { authorization: idToken },
       });
       const url = await handleImageUpload();
       const { latitude, longitude } = state.draft;
